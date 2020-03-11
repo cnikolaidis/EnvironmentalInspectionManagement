@@ -1,0 +1,243 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{924A5C7F-6FE4-403D-AEC0-A0F1DD2C4803}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EnvironmentalInspectionManagement.Presentation</RootNamespace>
+    <AssemblyName>EnvironmentalInspectionManagement.Presentation</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Windows.Interactivity.WPF.2.0.20525\lib\net40\Microsoft.Expression.Interactions.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Controls.DataVisualization.Toolkit, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Windows.Controls.DataVisualization.Toolkit.4.0.0.0\lib\net40-Client\System.Windows.Controls.DataVisualization.Toolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Windows.Interactivity.WPF.2.0.20525\lib\net40\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Helpers\NumericInputHelper.cs" />
+    <Compile Include="Helpers\PasswordHelper.cs" />
+    <Compile Include="LogWindow.xaml.cs">
+      <DependentUpon>LogWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\MainView.xaml.cs">
+      <DependentUpon>MainView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RenderViews\AutopsyDocumentCategoriesView.xaml.cs">
+      <DependentUpon>AutopsyDocumentCategoriesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RenderViews\CasesView.xaml.cs">
+      <DependentUpon>CasesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RenderViews\DictionaryView.xaml.cs">
+      <DependentUpon>DictionaryView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RenderViews\InspectorsView.xaml.cs">
+      <DependentUpon>InspectorsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RenderViews\LogMonitoringView.xaml.cs">
+      <DependentUpon>LogMonitoringView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RenderViews\NaceCodeSectorsView.xaml.cs">
+      <DependentUpon>NaceCodeSectorsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RenderViews\NaceCodesView.xaml.cs">
+      <DependentUpon>NaceCodesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RenderViews\OrganizationsView.xaml.cs">
+      <DependentUpon>OrganizationsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RenderViews\OtherDictionariesView.xaml.cs">
+      <DependentUpon>OtherDictionariesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RenderViews\PreferencesView.xaml.cs">
+      <DependentUpon>PreferencesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RenderViews\RegionalUnitiesView.xaml.cs">
+      <DependentUpon>RegionalUnitiesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RenderViews\RegionsView.xaml.cs">
+      <DependentUpon>RegionsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RenderViews\StatisticsView.xaml.cs">
+      <DependentUpon>StatisticsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RenderViews\TaxOfficesView.xaml.cs">
+      <DependentUpon>TaxOfficesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RenderViews\UserManagementView.xaml.cs">
+      <DependentUpon>UserManagementView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RenderViews\WorkCategoriesView.xaml.cs">
+      <DependentUpon>WorkCategoriesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RenderViews\WorkSubcategoriesView.xaml.cs">
+      <DependentUpon>WorkSubcategoriesView.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Fonts\Charmonman\Charmonman-Bold.ttf" />
+    <None Include="Fonts\Charmonman\Charmonman-Regular.ttf" />
+    <None Include="Fonts\Cinzel\Cinzel-Black.ttf" />
+    <None Include="Fonts\Cinzel\Cinzel-Bold.ttf" />
+    <None Include="Fonts\Cinzel\Cinzel-Regular.ttf" />
+    <None Include="Fonts\Lobster\Lobster-Regular.ttf" />
+    <None Include="Fonts\Noto_Serif_SC\NotoSerifSC-Black.otf" />
+    <None Include="Fonts\Noto_Serif_SC\NotoSerifSC-Bold.otf" />
+    <None Include="Fonts\Noto_Serif_SC\NotoSerifSC-ExtraLight.otf" />
+    <None Include="Fonts\Noto_Serif_SC\NotoSerifSC-Light.otf" />
+    <None Include="Fonts\Noto_Serif_SC\NotoSerifSC-Medium.otf" />
+    <None Include="Fonts\Noto_Serif_SC\NotoSerifSC-Regular.otf" />
+    <None Include="Fonts\Noto_Serif_SC\NotoSerifSC-SemiBold.otf" />
+    <None Include="Fonts\Roboto\Roboto-Black.ttf" />
+    <None Include="Fonts\Roboto\Roboto-BlackItalic.ttf" />
+    <None Include="Fonts\Roboto\Roboto-Bold.ttf" />
+    <None Include="Fonts\Roboto\Roboto-BoldItalic.ttf" />
+    <None Include="Fonts\Roboto\Roboto-Italic.ttf" />
+    <None Include="Fonts\Roboto\Roboto-Light.ttf" />
+    <None Include="Fonts\Roboto\Roboto-LightItalic.ttf" />
+    <None Include="Fonts\Roboto\Roboto-Medium.ttf" />
+    <None Include="Fonts\Roboto\Roboto-MediumItalic.ttf" />
+    <None Include="Fonts\Roboto\Roboto-Regular.ttf" />
+    <None Include="Fonts\Roboto\Roboto-Thin.ttf" />
+    <None Include="Fonts\Roboto\Roboto-ThinItalic.ttf" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Images\add.png" />
+    <Content Include="Images\black-linen.png" />
+    <Content Include="Images\close.png" />
+    <Content Include="Images\erase.png" />
+    <Content Include="Images\home.png" />
+    <Content Include="Images\leaf.png" />
+    <Content Include="Images\loginBgImg.jpg" />
+    <Content Include="Images\magnifier.png" />
+    <Content Include="Images\refresh.png" />
+    <Content Include="Images\save.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="LogWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\MainView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\RenderViews\AutopsyDocumentCategoriesView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\RenderViews\CasesView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\RenderViews\DictionaryView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\RenderViews\InspectorsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\RenderViews\LogMonitoringView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\RenderViews\NaceCodeSectorsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\RenderViews\NaceCodesView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\RenderViews\OrganizationsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\RenderViews\OtherDictionariesView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\RenderViews\PreferencesView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\RenderViews\RegionalUnitiesView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\RenderViews\RegionsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\RenderViews\StatisticsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\RenderViews\TaxOfficesView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\RenderViews\UserManagementView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\RenderViews\WorkCategoriesView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\RenderViews\WorkSubcategoriesView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EnvironmentalInspectionManagement.BusinessLogic\EnvironmentalInspectionManagement.BusinessLogic.csproj">
+      <Project>{04ffe91d-97ed-4e06-89ce-ef8dfb85b4ff}</Project>
+      <Name>EnvironmentalInspectionManagement.BusinessLogic</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

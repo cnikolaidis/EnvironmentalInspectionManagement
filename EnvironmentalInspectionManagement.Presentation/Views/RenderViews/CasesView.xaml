@@ -1,0 +1,2907 @@
+﻿<UserControl
+    x:Class="EnvironmentalInspectionManagement.Presentation.Views.RenderViews.CasesView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:helpers="clr-namespace:EnvironmentalInspectionManagement.Presentation.Helpers"
+    mc:Ignorable="d" 
+    d:DesignHeight="800"
+    d:DesignWidth="1000"
+    x:Name="CasesPresentation">
+
+    <UserControl.Resources>
+
+        <Style TargetType="{x:Type Border}">
+            <Setter Property="Background" Value="#3000"/>
+            <Setter Property="CornerRadius" Value="5"/>
+            <Setter Property="Padding" Value="2"/>
+            <Setter Property="Margin" Value="10"/>
+        </Style>
+        <Style TargetType="{x:Type DataGrid}">
+            <Setter Property="Background" Value="#2FFF"/>
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+            <Setter Property="CanUserResizeRows" Value="False"/>
+            <Setter Property="RowHeight" Value="25"/>
+            <Setter Property="RowBackground" Value="#2FFF"/>
+            <Setter Property="CanUserAddRows" Value="False"/>
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="ColumnWidth" Value="*"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="GridLinesVisibility" Value="None"/>
+            <Setter Property="HorizontalScrollBarVisibility" Value="Hidden"/>
+            <Setter Property="SelectionMode" Value="Single"/>
+        </Style>
+        <Style TargetType="{x:Type DataGridRow}">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Height" Value="Auto"/>
+        </Style>
+        <Style TargetType="{x:Type DataGridCell}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type DataGridCell}">
+                        <Grid Background="{TemplateBinding Background}">
+                            <ContentPresenter VerticalAlignment="Center" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsActive}" Value="{x:Null}">
+                    <Setter Property="Foreground" Value="White"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsActive}" Value="True">
+                    <Setter Property="Foreground" Value="White"/>
+                </DataTrigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Foreground" Value="Black"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="{x:Type DataGridColumnHeader}">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#2000"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="25"/>
+        </Style>
+        <Style TargetType="{x:Type TextBlock}">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+        <Style TargetType="{x:Type TextBox}">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0, 0, 0, 1"/>
+            <Setter Property="CaretBrush" Value="White"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+        <ControlTemplate x:Key="ComboBoxToggleButton" TargetType="{x:Type ToggleButton}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="20" />
+                </Grid.ColumnDefinitions>
+                <Border
+                    x:Name="Border" 
+                    Grid.ColumnSpan="2"
+                    CornerRadius="0"
+                    Background="Transparent"
+                    BorderBrush="#FF97A0A5"
+                    BorderThickness="1" />
+                <Border 
+                    Grid.Column="0"
+                    CornerRadius="0" 
+                    Margin="1" 
+                    Background="Transparent" 
+                    BorderBrush="#FF97A0A5"
+                    BorderThickness="0,0,1,0" />
+                <Path 
+                    x:Name="Arrow"
+                    Grid.Column="1"     
+                    Fill="White"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Data="M0,0 L0,2 L4,6 L8,2 L8,0 L4,4 z"/>
+            </Grid>
+        </ControlTemplate>
+        <ControlTemplate x:Key="ComboBoxTextBox" TargetType="{x:Type TextBox}">
+            <Border x:Name="PART_ContentHost" Focusable="False" Background="{TemplateBinding Background}"/>
+        </ControlTemplate>
+        <Style TargetType="{x:Type ComboBox}">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="SnapsToDevicePixels" Value="true"/>
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Margin" Value="10, 0, 10, 0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ComboBox}">
+                        <Grid>
+
+                            <ToggleButton 
+                                Name="ToggleButton" 
+                                Template="{StaticResource ComboBoxToggleButton}"
+                                Focusable="false"
+                                IsChecked="{Binding Path=IsDropDownOpen,Mode=TwoWay,RelativeSource={RelativeSource TemplatedParent}}"
+                                ClickMode="Press"/>
+
+                            <ContentPresenter Name="ContentSite" IsHitTestVisible="False"  Content="{TemplateBinding SelectionBoxItem}"
+                                ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                Margin="3,3,23,3"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Left"/>
+
+                            <TextBox x:Name="PART_EditableTextBox"
+                                Style="{x:Null}" 
+                                Template="{StaticResource ComboBoxTextBox}" 
+                                HorizontalAlignment="Left" 
+                                VerticalAlignment="Center" 
+                                Margin="3,3,23,3"
+                                Focusable="True" 
+                                Background="#FF3F3F3F"
+                                Foreground="Green"
+                                Visibility="Hidden"
+                                IsReadOnly="{TemplateBinding IsReadOnly}"/>
+
+                            <Popup 
+                                Name="Popup"
+                                Placement="Bottom"
+                                IsOpen="{TemplateBinding IsDropDownOpen}"
+                                AllowsTransparency="True" 
+                                Focusable="False"
+                                PopupAnimation="Slide">
+
+                                <Grid Name="DropDown"
+                                    SnapsToDevicePixels="True"                
+                                    MinWidth="{TemplateBinding ActualWidth}"
+                                    MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                    <Border 
+                                        x:Name="DropDownBorder"
+                                        Background="#C000"
+                                        BorderThickness="1"
+                                        BorderBrush="#888888"/>
+                                    <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
+                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
+                                    </ScrollViewer>
+                                </Grid>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="HasItems" Value="false">
+                                <Setter TargetName="DropDownBorder" Property="MinHeight" Value="95"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Foreground" Value="#888888"/>
+                            </Trigger>
+                            <Trigger Property="IsGrouping" Value="true">
+                                <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                            </Trigger>
+                            <Trigger SourceName="Popup" Property="Popup.AllowsTransparency" Value="true">
+                                <Setter TargetName="DropDownBorder" Property="CornerRadius" Value="0"/>
+                                <Setter TargetName="DropDownBorder" Property="Margin" Value="0,2,0,0"/>
+                            </Trigger>
+                            <Trigger Property="IsEditable"  Value="true">
+                                <Setter Property="IsTabStop" Value="false"/>
+                                <Setter TargetName="PART_EditableTextBox" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="ContentSite" Property="Visibility" Value="Hidden"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="{x:Type ComboBoxItem}">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="SnapsToDevicePixels" Value="true"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ComboBoxItem}">
+                        <Border Name="Border"
+                              Padding="2"
+                              SnapsToDevicePixels="true">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="true">
+                                <Setter TargetName="Border" Property="Background" Value="#FF4F4F4F"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Foreground" Value="#888888"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="Transparent"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+    </UserControl.Resources>
+
+    <Grid>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="400"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid
+            Grid.Row="0"
+            Grid.Column="0"
+            Margin="2">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border
+                Grid.Row="0"
+                Grid.Column="0"
+                HorizontalAlignment="Left">
+
+                <Grid>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        Padding="5"
+                        FontSize="18"
+                        Text="Υποθέσεις"/>
+
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        FontStyle="Italic"
+                        Padding="2"
+                        Text="Εύρεση"/>
+
+                    <TextBox
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Width="150"
+                        Padding="2"
+                        Text="{Binding Path=CasesSearchTerm, Mode=TwoWay, Delay=10, UpdateSourceTrigger=PropertyChanged}"/>
+
+                </Grid>
+
+            </Border>
+
+            <DataGrid
+                ItemsSource="{Binding Cases}"
+                SelectedItem="{Binding SelectedCase}"
+                Grid.Row="1"
+                Grid.Column="0">
+
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Width="25">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Command="{Binding DataContext.DeleteCaseCommand, ElementName=CasesPresentation}">
+
+                                        <StackPanel>
+                                            <StackPanel.Background>
+                                                <RadialGradientBrush>
+                                                    <GradientStop Color="#FFFF" Offset="1"/>
+                                                    <GradientStop Color="#00F0" Offset="1"/>
+                                                </RadialGradientBrush>
+                                            </StackPanel.Background>
+                                            <Image
+                                                Width="15"
+                                                Height="15"
+                                                Margin="2"
+                                                Source="../../Images/close.png"/>
+                                        </StackPanel>
+
+                                    </Button>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn
+                        Width="40"
+                        Header="Id"
+                        Binding="{Binding Id}"/>
+
+                    <DataGridTextColumn
+                        Width="150"
+                        Header="Δραστηριότητα"
+                        Binding="{Binding ActivityName}"/>
+
+                    <DataGridTextColumn
+                        Width="100"
+                        Header="Έγγραφα"
+                        Binding="{Binding DocumentsCount}"/>
+
+                    <DataGridTextColumn
+                        Width="*"
+                        Header="Πορεία"
+                        Binding="{Binding CaseProgress}"/>
+                </DataGrid.Columns>
+
+                <DataGrid.Resources>
+                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#5FFF"/>
+                    <Style TargetType="{x:Type ScrollBar}">
+                        <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+                        <Setter Property="Background" Value="Transparent"/>
+
+                        <Setter Property="Template">
+                            <Setter.Value>
+
+                                <ControlTemplate TargetType="{x:Type ScrollBar}">
+                                    <Grid x:Name="GridRoot" Width="8" Background="{TemplateBinding Background}">
+
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+
+                                        <Track
+                                        x:Name="PART_Track"
+                                        Grid.Row="0"
+                                        IsDirectionReversed="true"
+                                        Focusable="false">
+
+                                            <Track.Thumb>
+                                                <Thumb
+                                                x:Name="Thumb"
+                                                Background="#FFFF"
+                                                BorderThickness="0">
+
+                                                    <Thumb.Resources>
+                                                        <Style TargetType="{x:Type Border}">
+                                                            <Setter Property="CornerRadius" Value="5"/>
+                                                        </Style>
+                                                    </Thumb.Resources>
+
+                                                </Thumb>
+                                            </Track.Thumb>
+
+                                        </Track>
+                                    </Grid>
+
+                                    <ControlTemplate.Triggers>
+
+                                        <Trigger SourceName="Thumb" Property="IsMouseOver" Value="true">
+                                            <Setter
+                                            Value="{DynamicResource ButtonSelectBrush}"
+                                            TargetName="Thumb"
+                                            Property="Background"/>
+                                        </Trigger>
+
+                                        <Trigger SourceName="Thumb" Property="IsDragging" Value="true">
+                                            <Setter
+                                            Value="{DynamicResource DarkBrush}"
+                                            TargetName="Thumb"
+                                            Property="Background"/>
+                                        </Trigger>
+
+                                        <Trigger Property="IsEnabled" Value="false">
+                                            <Setter TargetName="Thumb" Property="Visibility" Value="Collapsed"/>
+                                        </Trigger>
+
+                                        <Trigger Property="Orientation" Value="Horizontal">
+                                            <Setter Property="Width" Value="Auto"/>
+                                            <Setter TargetName="Thumb" Property="Tag" Value="Horizontal"/>
+                                        </Trigger>
+
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </DataGrid.Resources>
+
+            </DataGrid>
+
+        </Grid>
+
+        <Grid
+                Grid.Row="1"
+                Grid.Column="0"
+                Margin="2">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    HorizontalAlignment="Left">
+
+                <Grid>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        Padding="5"
+                        FontSize="18"
+                        Text="Έγγραφα"/>
+
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        FontStyle="Italic"
+                        Padding="2"
+                        Text="Εύρεση"/>
+
+                    <TextBox
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Width="150"
+                        Padding="2"
+                        Text="{Binding Path=DocumentsSearchTerm, Mode=TwoWay, Delay=10, UpdateSourceTrigger=PropertyChanged}"/>
+
+                </Grid>
+
+            </Border>
+
+            <DataGrid
+                    ItemsSource="{Binding CaseDocuments}"
+                    SelectedItem="{Binding SelectedCaseDocument}"
+                    Grid.Row="1"
+                    Grid.Column="0">
+                
+                <DataGrid.InputBindings>
+                    <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding Path=CaseDocumentDataGridRowDoubleClick}"/>
+                </DataGrid.InputBindings>
+
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Width="25">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Command="{Binding DataContext.DeleteCaseDocumentCommand, ElementName=CasesPresentation}">
+
+                                        <StackPanel>
+                                            <StackPanel.Background>
+                                                <RadialGradientBrush>
+                                                    <GradientStop Color="#FFFF" Offset="1"/>
+                                                    <GradientStop Color="#00F0" Offset="1"/>
+                                                </RadialGradientBrush>
+                                            </StackPanel.Background>
+                                            <Image
+                                                Width="15"
+                                                Height="15"
+                                                Margin="2"
+                                                Source="../../Images/close.png"/>
+                                        </StackPanel>
+
+                                    </Button>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn
+                        Width="40"
+                        Header="Id"
+                        Binding="{Binding Id}"/>
+
+                    <DataGridTextColumn
+                        Width="150"
+                        Header="Κατηγορία Εγγράφου"
+                        Binding="{Binding DocumentType}"/>
+
+                    <DataGridTextColumn
+                        Width="*"
+                        Header="Αρ. Κατάταξης"
+                        Binding="{Binding LibraryIdentity}"/>
+                </DataGrid.Columns>
+
+                <DataGrid.Resources>
+                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#5FFF"/>
+                    <Style TargetType="{x:Type ScrollBar}">
+                        <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+                        <Setter Property="Background" Value="Transparent"/>
+
+                        <Setter Property="Template">
+                            <Setter.Value>
+
+                                <ControlTemplate TargetType="{x:Type ScrollBar}">
+                                    <Grid x:Name="GridRoot" Width="8" Background="{TemplateBinding Background}">
+
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+
+                                        <Track
+                                        x:Name="PART_Track"
+                                        Grid.Row="0"
+                                        IsDirectionReversed="true"
+                                        Focusable="false">
+
+                                            <Track.Thumb>
+                                                <Thumb
+                                                x:Name="Thumb"
+                                                Background="#FFFF"
+                                                BorderThickness="0">
+
+                                                    <Thumb.Resources>
+                                                        <Style TargetType="{x:Type Border}">
+                                                            <Setter Property="CornerRadius" Value="5"/>
+                                                        </Style>
+                                                    </Thumb.Resources>
+
+                                                </Thumb>
+                                            </Track.Thumb>
+
+                                        </Track>
+                                    </Grid>
+
+                                    <ControlTemplate.Triggers>
+
+                                        <Trigger SourceName="Thumb" Property="IsMouseOver" Value="true">
+                                            <Setter
+                                            Value="{DynamicResource ButtonSelectBrush}"
+                                            TargetName="Thumb"
+                                            Property="Background"/>
+                                        </Trigger>
+
+                                        <Trigger SourceName="Thumb" Property="IsDragging" Value="true">
+                                            <Setter
+                                            Value="{DynamicResource DarkBrush}"
+                                            TargetName="Thumb"
+                                            Property="Background"/>
+                                        </Trigger>
+
+                                        <Trigger Property="IsEnabled" Value="false">
+                                            <Setter TargetName="Thumb" Property="Visibility" Value="Collapsed"/>
+                                        </Trigger>
+
+                                        <Trigger Property="Orientation" Value="Horizontal">
+                                            <Setter Property="Width" Value="Auto"/>
+                                            <Setter TargetName="Thumb" Property="Tag" Value="Horizontal"/>
+                                        </Trigger>
+
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </DataGrid.Resources>
+
+            </DataGrid>
+
+        </Grid>
+
+        <Border
+            Grid.Row="0"
+            Grid.Column="1"
+            Grid.RowSpan="2"
+            Background="#2FFF">
+
+            <Grid>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <DockPanel
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Margin="5">
+
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Text="ID Επιλεγμένης Υπόθεσης"/>
+
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Text="{Binding Path=SelectedCase.Id}"/>
+                    
+                </DockPanel>
+                
+                <DockPanel
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Margin="5">
+
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Text="Δραστηριότητα"/>
+
+                    <ComboBox
+                        Text="{Binding Path=CaseActivitySelected.Text, Mode=TwoWay}"
+                        ItemsSource="{Binding ActivitiesOptions}"
+                        SelectedItem="{Binding CaseActivitySelected}">
+
+                        <ComboBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel />
+                            </ItemsPanelTemplate>
+                        </ComboBox.ItemsPanel>
+
+                    </ComboBox>
+
+                </DockPanel>
+
+                <Grid
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    HorizontalAlignment="Right">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Command="{Binding Path=AddCaseCommand}">
+
+                        <Image
+                            Width="20"
+                            Height="20"
+                            Source="../../Images/add.png"/>
+
+                    </Button>
+
+                    <Button
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Command="{Binding Path=ClearCaseInputsCommand}">
+
+                        <Image
+                            Width="20"
+                            Height="20"
+                            Source="../../Images/erase.png"/>
+
+                    </Button>
+
+                </Grid>
+
+                <TabControl
+                    Grid.Row="3"
+                    Grid.Column="0"
+                    Margin="2"
+                    BorderThickness="0"
+                    Background="Transparent">
+
+                    <TabControl.Resources>
+                        <Style TargetType="TabItem">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="TabItem">
+                                        <Border
+                                            Name="Border"
+                                            BorderThickness="1,1,1,0"
+                                            BorderBrush="#5FFF"
+                                            CornerRadius="4,4,0,0"
+                                            Cursor="Hand"
+                                            Margin="2,0">
+                                            <ContentPresenter
+                                                x:Name="ContentSite"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                ContentSource="Header"
+                                                Margin="10,2"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="Border" Property="Background" Value="#80F0"/>
+                                                <Setter Property="Foreground" Value="#FFF"/>
+                                            </Trigger>
+                                            <Trigger Property="IsSelected" Value="False">
+                                                <Setter TargetName="Border" Property="Background" Value="Transparent" />
+                                                <Setter Property="Foreground" Value="#FFF"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </TabControl.Resources>
+
+                    <TabItem
+                        IsSelected="{Binding Path=GeneralDocumentTabSelected}"
+                        Header="Γενικό Έγγραφο">
+
+                        <ScrollViewer VerticalScrollBarVisibility="Hidden">
+
+                            <ScrollViewer.Resources>
+                                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#5FFF"/>
+                                <Style TargetType="{x:Type ScrollBar}">
+                                    <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+                                    <Setter Property="Background" Value="Transparent"/>
+
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+
+                                            <ControlTemplate TargetType="{x:Type ScrollBar}">
+                                                <Grid x:Name="GridRoot" Width="8" Background="{TemplateBinding Background}">
+
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="*" />
+                                                    </Grid.RowDefinitions>
+
+                                                    <Track
+                                                        x:Name="PART_Track"
+                                                        Grid.Row="0"
+                                                        IsDirectionReversed="true"
+                                                        Focusable="false">
+
+                                                        <Track.Thumb>
+                                                            <Thumb
+                                                                x:Name="Thumb"
+                                                                Background="#FFFF"
+                                                                BorderThickness="0">
+
+                                                                <Thumb.Resources>
+                                                                    <Style TargetType="{x:Type Border}">
+                                                                        <Setter Property="CornerRadius" Value="5"/>
+                                                                    </Style>
+                                                                </Thumb.Resources>
+
+                                                            </Thumb>
+                                                        </Track.Thumb>
+
+                                                    </Track>
+                                                </Grid>
+
+                                                <ControlTemplate.Triggers>
+
+                                                    <Trigger SourceName="Thumb" Property="IsMouseOver" Value="true">
+                                                        <Setter
+                                                            Value="{DynamicResource ButtonSelectBrush}"
+                                                            TargetName="Thumb"
+                                                            Property="Background"/>
+                                                    </Trigger>
+
+                                                    <Trigger SourceName="Thumb" Property="IsDragging" Value="true">
+                                                        <Setter
+                                                            Value="{DynamicResource DarkBrush}"
+                                                            TargetName="Thumb"
+                                                            Property="Background"/>
+                                                    </Trigger>
+
+                                                    <Trigger Property="IsEnabled" Value="false">
+                                                        <Setter TargetName="Thumb" Property="Visibility" Value="Collapsed"/>
+                                                    </Trigger>
+
+                                                    <Trigger Property="Orientation" Value="Horizontal">
+                                                        <Setter Property="Width" Value="Auto"/>
+                                                        <Setter TargetName="Thumb" Property="Tag" Value="Horizontal"/>
+                                                    </Trigger>
+
+                                                </ControlTemplate.Triggers>
+
+                                            </ControlTemplate>
+
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ScrollViewer.Resources>
+
+                            <Grid>
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Grid
+                                    Grid.Row="0"
+                                    Grid.Column="0">
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="100"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock
+                                        Grid.Row="0"
+                                        Grid.Column="0"
+                                        VerticalAlignment="Center"
+                                        Text="Όνομα"/>
+
+                                    <TextBox
+                                        Grid.Row="0"
+                                        Grid.Column="1"
+                                        Text="{Binding Path=GeneralDocumentName, Mode=TwoWay}"/>
+
+                                    <TextBlock
+                                        Grid.Row="0"
+                                        Grid.Column="2"
+                                        VerticalAlignment="Center"
+                                        Text="Αριθμός Πρωτοκόλλου"/>
+
+                                    <TextBox
+                                        Grid.Row="0"
+                                        Grid.Column="3"
+                                        Text="{Binding Path=GeneralDocumentProtocolNo, Mode=TwoWay}"/>
+
+                                </Grid>
+
+                                <DockPanel
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Margin="5">
+
+                                    <TextBlock Text="Περιγραφή"/>
+
+                                    <TextBox
+                                        TextWrapping="Wrap"
+                                        AcceptsReturn="True"
+                                        CaretBrush="White"
+                                        VerticalScrollBarVisibility="Auto"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        VerticalContentAlignment="Top"
+                                        BorderThickness="1"
+                                        Text="{Binding Path=GeneralDocumentDescription, Mode=TwoWay}"/>
+
+                                </DockPanel>
+
+                                <Grid
+                                    Grid.Row="2"
+                                    Grid.Column="0"
+                                    HorizontalAlignment="Right">
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Button
+                                        Grid.Row="0"
+                                        Grid.Column="0"
+                                        Command="{Binding Path=AddGeneralDocumentCommand}">
+
+                                        <Image
+                                            Width="20"
+                                            Height="20"
+                                            Source="../../Images/add.png"/>
+
+                                    </Button>
+
+                                    <Button
+                                        Grid.Row="0"
+                                        Grid.Column="1"
+                                        Command="{Binding Path=UpdateGeneralDocumentCommand}">
+
+                                        <Image
+                                            Width="20"
+                                            Height="20"
+                                            Source="../../Images/save.png"/>
+
+                                    </Button>
+
+                                    <Button
+                                        Grid.Row="0"
+                                        Grid.Column="2"
+                                        Command="{Binding Path=ClearGeneralDocumentInputsCommand}">
+
+                                        <Image
+                                            Width="20"
+                                            Height="20"
+                                            Source="../../Images/erase.png"/>
+
+                                    </Button>
+
+                                </Grid>
+
+                            </Grid>
+
+                        </ScrollViewer>
+
+                    </TabItem>
+
+                    <TabItem
+                        IsSelected="{Binding Path=IndictmentTabSelected}"
+                        Header="Καταγγελία">
+
+                        <ScrollViewer VerticalScrollBarVisibility="Hidden">
+
+                            <ScrollViewer.Resources>
+                                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#5FFF"/>
+                                <Style TargetType="{x:Type ScrollBar}">
+                                    <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+                                    <Setter Property="Background" Value="Transparent"/>
+
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+
+                                            <ControlTemplate TargetType="{x:Type ScrollBar}">
+                                                <Grid x:Name="GridRoot" Width="8" Background="{TemplateBinding Background}">
+
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="*" />
+                                                    </Grid.RowDefinitions>
+
+                                                    <Track
+                                                        x:Name="PART_Track"
+                                                        Grid.Row="0"
+                                                        IsDirectionReversed="true"
+                                                        Focusable="false">
+
+                                                        <Track.Thumb>
+                                                            <Thumb
+                                                                x:Name="Thumb"
+                                                                Background="#FFFF"
+                                                                BorderThickness="0">
+
+                                                                <Thumb.Resources>
+                                                                    <Style TargetType="{x:Type Border}">
+                                                                        <Setter Property="CornerRadius" Value="5"/>
+                                                                    </Style>
+                                                                </Thumb.Resources>
+
+                                                            </Thumb>
+                                                        </Track.Thumb>
+
+                                                    </Track>
+                                                </Grid>
+
+                                                <ControlTemplate.Triggers>
+
+                                                    <Trigger SourceName="Thumb" Property="IsMouseOver" Value="true">
+                                                        <Setter
+                                                            Value="{DynamicResource ButtonSelectBrush}"
+                                                            TargetName="Thumb"
+                                                            Property="Background"/>
+                                                    </Trigger>
+
+                                                    <Trigger SourceName="Thumb" Property="IsDragging" Value="true">
+                                                        <Setter
+                                                            Value="{DynamicResource DarkBrush}"
+                                                            TargetName="Thumb"
+                                                            Property="Background"/>
+                                                    </Trigger>
+
+                                                    <Trigger Property="IsEnabled" Value="false">
+                                                        <Setter TargetName="Thumb" Property="Visibility" Value="Collapsed"/>
+                                                    </Trigger>
+
+                                                    <Trigger Property="Orientation" Value="Horizontal">
+                                                        <Setter Property="Width" Value="Auto"/>
+                                                        <Setter TargetName="Thumb" Property="Tag" Value="Horizontal"/>
+                                                    </Trigger>
+
+                                                </ControlTemplate.Triggers>
+
+                                            </ControlTemplate>
+
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ScrollViewer.Resources>
+
+                            <Grid>
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <DockPanel
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="2"
+                                    Margin="5">
+
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        Text="Προσδιορισμός Περιοχής Παράβασης"/>
+
+                                </DockPanel>
+
+                                <DockPanel
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Margin="5">
+
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        Text="Περιφέρεια"/>
+
+                                    <ComboBox
+                                        Text="{Binding Path=ViolationRegionSelected.Text, Mode=TwoWay}"
+                                        ItemsSource="{Binding RegionsOptions}"
+                                        SelectedItem="{Binding ViolationRegionSelected}">
+
+                                        <ComboBox.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <VirtualizingStackPanel />
+                                            </ItemsPanelTemplate>
+                                        </ComboBox.ItemsPanel>
+
+                                    </ComboBox>
+
+                                </DockPanel>
+
+                                <DockPanel
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Margin="5">
+
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        Text="Περιφερειακή Ενότητα"/>
+
+                                    <ComboBox
+                                        Text="{Binding Path=ViolationRegionalUnitySelected.Text, Mode=TwoWay}"
+                                        ItemsSource="{Binding RegionalUnitiesOptions}"
+                                        SelectedItem="{Binding ViolationRegionalUnitySelected}">
+
+                                        <ComboBox.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <VirtualizingStackPanel />
+                                            </ItemsPanelTemplate>
+                                        </ComboBox.ItemsPanel>
+
+                                    </ComboBox>
+
+                                </DockPanel>
+
+                                <DockPanel
+                                    Grid.Row="2"
+                                    Grid.Column="0"
+                                    Margin="5">
+
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        Text="Πόλη"/>
+
+                                    <ComboBox
+                                        Text="{Binding Path=ViolationCitySelected.Text, Mode=TwoWay}"
+                                        ItemsSource="{Binding CitiesOptions}"
+                                        SelectedItem="{Binding ViolationCitySelected}">
+
+                                        <ComboBox.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <VirtualizingStackPanel />
+                                            </ItemsPanelTemplate>
+                                        </ComboBox.ItemsPanel>
+
+                                    </ComboBox>
+
+                                </DockPanel>
+
+                                <DockPanel
+                                    Grid.Row="2"
+                                    Grid.Column="1"
+                                    Margin="5">
+
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        Text="Περιγραφή Περιοχής"/>
+
+                                    <TextBox Text="{Binding Path=ViolationRegionDescription}"/>
+
+                                </DockPanel>
+
+                                <DockPanel
+                                    Grid.Row="3"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="2"
+                                    Margin="5">
+
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        Text="Προσδιορισμός Περιοχής Κατάθεσης Καταγγελίας"/>
+
+                                </DockPanel>
+
+                                <DockPanel
+                                    Grid.Row="4"
+                                    Grid.Column="0"
+                                    Margin="5">
+
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        Text="Περιφέρεια"/>
+
+                                    <ComboBox
+                                        Text="{Binding Path=IndictmentRegionSelected.Text, Mode=TwoWay}"
+                                        ItemsSource="{Binding RegionsOptions}"
+                                        SelectedItem="{Binding IndictmentRegionSelected}">
+
+                                        <ComboBox.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <VirtualizingStackPanel />
+                                            </ItemsPanelTemplate>
+                                        </ComboBox.ItemsPanel>
+
+                                    </ComboBox>
+
+                                </DockPanel>
+
+                                <DockPanel
+                                    Grid.Row="4"
+                                    Grid.Column="1"
+                                    Margin="5">
+
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        Text="Περιφερειακή Ενότητα"/>
+
+                                    <ComboBox
+                                        Text="{Binding Path=IndictmentRegionalUnitySelected.Text, Mode=TwoWay}"
+                                        ItemsSource="{Binding RegionalUnitiesOptions}"
+                                        SelectedItem="{Binding IndictmentRegionalUnitySelected}">
+
+                                        <ComboBox.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <VirtualizingStackPanel />
+                                            </ItemsPanelTemplate>
+                                        </ComboBox.ItemsPanel>
+
+                                    </ComboBox>
+
+                                </DockPanel>
+
+                                <DockPanel
+                                    Grid.Row="5"
+                                    Grid.Column="0"
+                                    Margin="5">
+
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        Text="Πόλη"/>
+
+                                    <ComboBox
+                                        Text="{Binding Path=IndictmentCitySelected.Text, Mode=TwoWay}"
+                                        ItemsSource="{Binding CitiesOptions}"
+                                        SelectedItem="{Binding IndictmentCitySelected}">
+
+                                        <ComboBox.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <VirtualizingStackPanel />
+                                            </ItemsPanelTemplate>
+                                        </ComboBox.ItemsPanel>
+
+                                    </ComboBox>
+
+                                </DockPanel>
+
+                                <DockPanel
+                                    Grid.Row="5"
+                                    Grid.Column="1"
+                                    Margin="5">
+
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        Text="Περιγραφή Περιοχής"/>
+
+                                    <TextBox Text="{Binding Path=IndictmentRegionDescription, Mode=TwoWay}"/>
+
+                                </DockPanel>
+
+                                <DockPanel
+                                    Grid.Row="6"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="2"
+                                    Margin="5">
+
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        Text="Πληροφορίες Καταγγελίας"/>
+
+                                </DockPanel>
+
+                                <DockPanel
+                                    Grid.Row="7"
+                                    Grid.Column="0"
+                                    Margin="5">
+
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        Text="Καταγγέλων"/>
+
+                                    <TextBox Text="{Binding Path=IndictorName, Mode=TwoWay}"/>
+
+                                </DockPanel>
+
+                                <DockPanel
+                                    Grid.Row="7"
+                                    Grid.Column="1"
+                                    Margin="5">
+
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        Text="Καταγγελόμενος"/>
+
+                                    <TextBox Text="{Binding Path=IndicteeName, Mode=TwoWay}"/>
+
+                                </DockPanel>
+                                
+                                <DockPanel
+                                    Grid.Row="8"
+                                    Grid.Column="0"
+                                    Margin="5">
+
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        Text="Βαθμός Ασφάλειας"/>
+
+                                    <ComboBox
+                                        Text="{Binding Path=IndictmentSafetyDegreeSelected.Text, Mode=TwoWay}"
+                                        ItemsSource="{Binding IndictmentSafetyDegreesOptions}"
+                                        SelectedItem="{Binding IndictmentSafetyDegreeSelected}">
+
+                                        <ComboBox.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <VirtualizingStackPanel />
+                                            </ItemsPanelTemplate>
+                                        </ComboBox.ItemsPanel>
+
+                                    </ComboBox>
+
+                                </DockPanel>
+
+                                <DockPanel
+                                    Grid.Row="8"
+                                    Grid.Column="1"
+                                    Margin="5">
+
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        Text="Βαθμός Προτεραιότητας"/>
+
+                                    <ComboBox
+                                        Text="{Binding Path=IndictmentPriorityDegreeSelected.Text, Mode=TwoWay}"
+                                        ItemsSource="{Binding IndictmentPriorityDegreesOptions}"
+                                        SelectedItem="{Binding IndictmentPriorityDegreeSelected}">
+
+                                        <ComboBox.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <VirtualizingStackPanel />
+                                            </ItemsPanelTemplate>
+                                        </ComboBox.ItemsPanel>
+
+                                    </ComboBox>
+
+                                </DockPanel>
+
+                                <DockPanel
+                                    Grid.Row="9"
+                                    Grid.Column="0"
+                                    Margin="5">
+
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        Text="Ημ. Καταγγελίας"/>
+
+                                    <DatePicker SelectedDate="{Binding Path=IndictmentDate}">
+
+                                        <DatePicker.Resources>
+                                            <Style TargetType="{x:Type DatePicker}">
+                                                <Setter Property="Foreground" Value="White"/>
+                                                <Setter Property="BorderThickness" Value="0"/>
+                                                <Setter Property="Padding" Value="0"/>
+                                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                            </Style>
+                                            <Style TargetType="{x:Type DatePickerTextBox}">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate>
+                                                            <TextBox x:Name="PART_TextBox" Text="{Binding Path=SelectedDate, StringFormat='dd/MM/yyyy', RelativeSource={RelativeSource AncestorType={x:Type DatePicker}}}" />
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Setter Property="BorderThickness" Value="0"/>
+                                                <Setter Property="Background" Value="Transparent"/>
+                                                <Setter Property="Foreground" Value="White"/>
+                                                <Setter Property="TextAlignment" Value="Center"/>
+                                                <Setter Property="Margin" Value="10, 0, 10, 0"/>
+                                            </Style>
+                                        </DatePicker.Resources>
+
+                                    </DatePicker>
+
+                                </DockPanel>
+
+                                <DockPanel
+                                    Grid.Row="9"
+                                    Grid.Column="1"
+                                    Margin="5">
+
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        Text="Αριθμός Πρωτοκόλλου"/>
+
+                                    <TextBox Text="{Binding Path=IndictmentProtocolNo, Mode=TwoWay}"/>
+
+                                </DockPanel>
+
+                                <DockPanel
+                                    Grid.Row="10"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="2"
+                                    Margin="5">
+
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        Text="Θέμα"/>
+
+                                    <TextBox Text="{Binding Path=IndictmentSubject, Mode=TwoWay}"/>
+
+                                </DockPanel>
+
+                                <DockPanel
+                                    Grid.Row="11"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="2"
+                                    Margin="5">
+
+                                    <TextBlock Text="Περιεχόμενο"/>
+
+                                    <TextBox
+                                        TextWrapping="Wrap"
+                                        AcceptsReturn="True"
+                                        CaretBrush="White"
+                                        VerticalScrollBarVisibility="Auto"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        VerticalContentAlignment="Top"
+                                        BorderThickness="1"
+                                        Text="{Binding Path=IndictmentContent, Mode=TwoWay}"/>
+
+                                </DockPanel>
+
+                                <Grid
+                                    Grid.Row="12"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="2"
+                                    HorizontalAlignment="Right">
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Button
+                                        Grid.Row="0"
+                                        Grid.Column="0"
+                                        Command="{Binding Path=AddIndictmentCommand}">
+
+                                        <Image
+                                            Width="20"
+                                            Height="20"
+                                            Source="../../Images/add.png"/>
+
+                                    </Button>
+
+                                    <Button
+                                        Grid.Row="0"
+                                        Grid.Column="1"
+                                        Command="{Binding Path=UpdateIndictmentCommand}">
+
+                                        <Image
+                                            Width="20"
+                                            Height="20"
+                                            Source="../../Images/save.png"/>
+
+                                    </Button>
+
+                                    <Button
+                                        Grid.Row="0"
+                                        Grid.Column="2"
+                                        Command="{Binding Path=ClearIndictmentInputsCommand}">
+
+                                        <Image
+                                            Width="20"
+                                            Height="20"
+                                            Source="../../Images/erase.png"/>
+
+                                    </Button>
+
+                                </Grid>
+
+                            </Grid>
+
+                        </ScrollViewer>
+
+                    </TabItem>
+
+                    <TabItem
+                        IsSelected="{Binding Path=AutopsyTabSelected}"
+                        Header="Αυτοψία">
+
+                        <Grid>
+                            
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TabControl
+                            Margin="2"
+                            BorderThickness="0"
+                            Background="Transparent">
+
+                                <TabControl.Resources>
+                                    <Style TargetType="TabItem">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="TabItem">
+                                                    <Border
+                                                    Name="Border"
+                                                    Cursor="Hand"
+                                                    Margin="2,0">
+                                                        <ContentPresenter
+                                                        x:Name="ContentSite"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalAlignment="Center"
+                                                        ContentSource="Header"
+                                                        Margin="10,2"/>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsSelected" Value="True">
+                                                            <Setter TargetName="Border" Property="Background" Value="#5FFF"/>
+                                                            <Setter Property="Foreground" Value="#FFF"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsSelected" Value="False">
+                                                            <Setter TargetName="Border" Property="Background" Value="Transparent" />
+                                                            <Setter Property="Foreground" Value="#FFF"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </TabControl.Resources>
+
+                                <TabItem Header="Στοιχεία">
+
+                                    <ScrollViewer VerticalScrollBarVisibility="Hidden">
+
+                                        <ScrollViewer.Resources>
+                                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#5FFF"/>
+                                            <Style TargetType="{x:Type ScrollBar}">
+                                                <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+                                                <Setter Property="Background" Value="Transparent"/>
+
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+
+                                                        <ControlTemplate TargetType="{x:Type ScrollBar}">
+                                                            <Grid x:Name="GridRoot" Width="8" Background="{TemplateBinding Background}">
+
+                                                                <Grid.RowDefinitions>
+                                                                    <RowDefinition Height="*" />
+                                                                </Grid.RowDefinitions>
+
+                                                                <Track
+                                                        x:Name="PART_Track"
+                                                        Grid.Row="0"
+                                                        IsDirectionReversed="true"
+                                                        Focusable="false">
+
+                                                                    <Track.Thumb>
+                                                                        <Thumb
+                                                                x:Name="Thumb"
+                                                                Background="#FFFF"
+                                                                BorderThickness="0">
+
+                                                                            <Thumb.Resources>
+                                                                                <Style TargetType="{x:Type Border}">
+                                                                                    <Setter Property="CornerRadius" Value="5"/>
+                                                                                </Style>
+                                                                            </Thumb.Resources>
+
+                                                                        </Thumb>
+                                                                    </Track.Thumb>
+
+                                                                </Track>
+                                                            </Grid>
+
+                                                            <ControlTemplate.Triggers>
+
+                                                                <Trigger SourceName="Thumb" Property="IsMouseOver" Value="true">
+                                                                    <Setter
+                                                            Value="{DynamicResource ButtonSelectBrush}"
+                                                            TargetName="Thumb"
+                                                            Property="Background"/>
+                                                                </Trigger>
+
+                                                                <Trigger SourceName="Thumb" Property="IsDragging" Value="true">
+                                                                    <Setter
+                                                            Value="{DynamicResource DarkBrush}"
+                                                            TargetName="Thumb"
+                                                            Property="Background"/>
+                                                                </Trigger>
+
+                                                                <Trigger Property="IsEnabled" Value="false">
+                                                                    <Setter TargetName="Thumb" Property="Visibility" Value="Collapsed"/>
+                                                                </Trigger>
+
+                                                                <Trigger Property="Orientation" Value="Horizontal">
+                                                                    <Setter Property="Width" Value="Auto"/>
+                                                                    <Setter TargetName="Thumb" Property="Tag" Value="Horizontal"/>
+                                                                </Trigger>
+
+                                                            </ControlTemplate.Triggers>
+
+                                                        </ControlTemplate>
+
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </ScrollViewer.Resources>
+
+                                        <Grid>
+
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <DockPanel
+                                            Grid.Row="0"
+                                            Grid.Column="0"
+                                            Margin="5">
+
+                                                <TextBlock
+                                                VerticalAlignment="Center"
+                                                Text="Αρ.Πρωτόκολου"/>
+
+                                                <TextBox Text="{Binding Path=AutopsyProtocolNo, Mode=TwoWay}"/>
+
+                                            </DockPanel>
+
+                                            <DockPanel
+                                            Grid.Row="1"
+                                            Grid.Column="0"
+                                            Margin="5">
+
+                                                <TextBlock
+                                                VerticalAlignment="Center"
+                                                Text="Τύπος Εγγράφου"/>
+
+                                                <ComboBox
+                                                Text="{Binding Path=AutopsyDocumentTypeSelected.Text, Mode=TwoWay}"
+                                                ItemsSource="{Binding AutopsyDocumentTypesOptions}"
+                                                SelectedItem="{Binding AutopsyDocumentTypeSelected}">
+
+                                                    <ComboBox.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <VirtualizingStackPanel />
+                                                        </ItemsPanelTemplate>
+                                                    </ComboBox.ItemsPanel>
+
+                                                </ComboBox>
+
+                                            </DockPanel>
+
+                                            <DockPanel
+                                            Grid.Row="2"
+                                            Grid.Column="0"
+                                            Margin="5">
+
+                                                <TextBlock
+                                            VerticalAlignment="Center"
+                                            Text="Ημερομηνία Έναρξης"/>
+
+                                                <DatePicker SelectedDate="{Binding Path=AutopsyStartDate}">
+                                                    <DatePicker.Resources>
+                                                        <Style TargetType="{x:Type DatePicker}">
+                                                            <Setter Property="Foreground" Value="White"/>
+                                                            <Setter Property="BorderThickness" Value="0"/>
+                                                            <Setter Property="Padding" Value="0"/>
+                                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                                        </Style>
+                                                        <Style TargetType="{x:Type DatePickerTextBox}">
+                                                            <Setter Property="Template">
+                                                                <Setter.Value>
+                                                                    <ControlTemplate>
+                                                                        <TextBox x:Name="PART_TextBox" Text="{Binding Path=SelectedDate, StringFormat='dd/MM/yyyy', RelativeSource={RelativeSource AncestorType={x:Type DatePicker}}}" />
+                                                                    </ControlTemplate>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                            <Setter Property="BorderThickness" Value="0"/>
+                                                            <Setter Property="Background" Value="Transparent"/>
+                                                            <Setter Property="Foreground" Value="White"/>
+                                                            <Setter Property="TextAlignment" Value="Center"/>
+                                                            <Setter Property="Margin" Value="10, 0, 10, 0"/>
+                                                        </Style>
+                                                    </DatePicker.Resources>
+                                                </DatePicker>
+
+                                            </DockPanel>
+
+                                            <DockPanel
+                                        Grid.Row="3"
+                                        Grid.Column="0"
+                                        Margin="5">
+
+                                                <TextBlock
+                                            VerticalAlignment="Center"
+                                            Text="Ημερομηνία Λήξης"/>
+
+                                                <DatePicker SelectedDate="{Binding Path=AutopsyEndDate}">
+                                                    <DatePicker.Resources>
+                                                        <Style TargetType="{x:Type DatePicker}">
+                                                            <Setter Property="Foreground" Value="White"/>
+                                                            <Setter Property="BorderThickness" Value="0"/>
+                                                            <Setter Property="Padding" Value="0"/>
+                                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                                        </Style>
+                                                        <Style TargetType="{x:Type DatePickerTextBox}">
+                                                            <Setter Property="Template">
+                                                                <Setter.Value>
+                                                                    <ControlTemplate>
+                                                                        <TextBox x:Name="PART_TextBox" Text="{Binding Path=SelectedDate, StringFormat='dd/MM/yyyy', RelativeSource={RelativeSource AncestorType={x:Type DatePicker}}}" />
+                                                                    </ControlTemplate>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                            <Setter Property="BorderThickness" Value="0"/>
+                                                            <Setter Property="Background" Value="Transparent"/>
+                                                            <Setter Property="Foreground" Value="White"/>
+                                                            <Setter Property="TextAlignment" Value="Center"/>
+                                                            <Setter Property="Margin" Value="10, 0, 10, 0"/>
+                                                        </Style>
+                                                    </DatePicker.Resources>
+                                                </DatePicker>
+
+                                            </DockPanel>
+
+                                            <DockPanel
+                                        Grid.Row="4"
+                                        Grid.Column="0"
+                                        Margin="5">
+
+                                                <TextBlock
+                                            
+                                            VerticalAlignment="Center"
+                                            Text="Πρόστιμο"/>
+
+                                                <TextBox
+                                            helpers:NumericInputHelper.IsEnabled="True"
+                                            Text="{Binding Path=AutopsyFine, Mode=TwoWay}"/>
+
+                                            </DockPanel>
+
+                                            <DockPanel
+                                    Grid.Row="5"
+                                    Grid.Column="0"
+                                    Margin="5">
+
+                                                <TextBlock
+                                        Width="130"
+                                        Text="Στοιχεία Ελέγχου"/>
+
+                                                <TextBox
+                                        TextWrapping="Wrap"
+                                        AcceptsReturn="True"
+                                        CaretBrush="White"
+                                        VerticalScrollBarVisibility="Auto"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        VerticalContentAlignment="Top"
+                                        BorderThickness="1"
+                                        Text="{Binding Path=AutopsyElements, Mode=TwoWay}"/>
+
+                                            </DockPanel>
+
+                                            <DockPanel
+                                    Grid.Row="6"
+                                    Grid.Column="0"
+                                    Margin="5">
+
+                                                <TextBlock
+                                        Width="130"
+                                        Text="Ζητηθέντα Στοιχεία"/>
+
+                                                <TextBox
+                                        TextWrapping="Wrap"
+                                        AcceptsReturn="True"
+                                        CaretBrush="White"
+                                        VerticalScrollBarVisibility="Auto"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        VerticalContentAlignment="Top"
+                                        BorderThickness="1"
+                                        Text="{Binding Path=AutopsyWantedElements, Mode=TwoWay}"/>
+
+                                            </DockPanel>
+
+                                            <DockPanel
+                                    Grid.Row="7"
+                                    Grid.Column="0"
+                                    Margin="5">
+
+                                                <TextBlock
+                                        Width="130"
+                                        Text="Υποβληθέντα Στοιχεία"/>
+
+                                                <TextBox
+                                        TextWrapping="Wrap"
+                                        AcceptsReturn="True"
+                                        CaretBrush="White"
+                                        VerticalScrollBarVisibility="Auto"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        VerticalContentAlignment="Top"
+                                        BorderThickness="1"
+                                        Text="{Binding Path=AutopsySubmittedElements, Mode=TwoWay}"/>
+
+                                            </DockPanel>
+
+                                        </Grid>
+
+                                    </ScrollViewer>
+
+                                </TabItem>
+
+                                <TabItem Header="Ελεγκτές">
+
+                                    <ScrollViewer VerticalScrollBarVisibility="Hidden">
+
+                                        <ScrollViewer.Resources>
+                                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#5FFF"/>
+                                            <Style TargetType="{x:Type ScrollBar}">
+                                                <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+                                                <Setter Property="Background" Value="Transparent"/>
+
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+
+                                                        <ControlTemplate TargetType="{x:Type ScrollBar}">
+                                                            <Grid x:Name="GridRoot" Width="8" Background="{TemplateBinding Background}">
+
+                                                                <Grid.RowDefinitions>
+                                                                    <RowDefinition Height="*" />
+                                                                </Grid.RowDefinitions>
+
+                                                                <Track
+                                                        x:Name="PART_Track"
+                                                        Grid.Row="0"
+                                                        IsDirectionReversed="true"
+                                                        Focusable="false">
+
+                                                                    <Track.Thumb>
+                                                                        <Thumb
+                                                                x:Name="Thumb"
+                                                                Background="#FFFF"
+                                                                BorderThickness="0">
+
+                                                                            <Thumb.Resources>
+                                                                                <Style TargetType="{x:Type Border}">
+                                                                                    <Setter Property="CornerRadius" Value="5"/>
+                                                                                </Style>
+                                                                            </Thumb.Resources>
+
+                                                                        </Thumb>
+                                                                    </Track.Thumb>
+
+                                                                </Track>
+                                                            </Grid>
+
+                                                            <ControlTemplate.Triggers>
+
+                                                                <Trigger SourceName="Thumb" Property="IsMouseOver" Value="true">
+                                                                    <Setter
+                                                            Value="{DynamicResource ButtonSelectBrush}"
+                                                            TargetName="Thumb"
+                                                            Property="Background"/>
+                                                                </Trigger>
+
+                                                                <Trigger SourceName="Thumb" Property="IsDragging" Value="true">
+                                                                    <Setter
+                                                            Value="{DynamicResource DarkBrush}"
+                                                            TargetName="Thumb"
+                                                            Property="Background"/>
+                                                                </Trigger>
+
+                                                                <Trigger Property="IsEnabled" Value="false">
+                                                                    <Setter TargetName="Thumb" Property="Visibility" Value="Collapsed"/>
+                                                                </Trigger>
+
+                                                                <Trigger Property="Orientation" Value="Horizontal">
+                                                                    <Setter Property="Width" Value="Auto"/>
+                                                                    <Setter TargetName="Thumb" Property="Tag" Value="Horizontal"/>
+                                                                </Trigger>
+
+                                                            </ControlTemplate.Triggers>
+
+                                                        </ControlTemplate>
+
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </ScrollViewer.Resources>
+
+                                        <Grid>
+
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <DataGrid
+                                            ItemsSource="{Binding InspectorsForAutopsy}"
+                                            SelectedItem="{Binding SelectedInspectorForAutopsy}"
+                                            Margin="5"
+                                            Grid.Row="0"
+                                            Grid.Column="0">
+
+                                                <DataGrid.Columns>
+                                                    <DataGridTemplateColumn Width="25">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate>
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <Button Command="{Binding DataContext.DeleteInspectorForAutopsyCommand, ElementName=OrganizationsPresentation}">
+
+                                                                        <StackPanel>
+                                                                            <StackPanel.Background>
+                                                                                <RadialGradientBrush>
+                                                                                    <GradientStop Color="#FFFF" Offset="1"/>
+                                                                                    <GradientStop Color="#00F0" Offset="1"/>
+                                                                                </RadialGradientBrush>
+                                                                            </StackPanel.Background>
+                                                                            <Image
+                                                                            Width="15"
+                                                                            Height="15"
+                                                                            Margin="2"
+                                                                            Source="../../Images/close.png"/>
+                                                                        </StackPanel>
+
+                                                                    </Button>
+                                                                </StackPanel>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
+                                                    <DataGridTextColumn
+                                                    Width="40"
+                                                    Header="Id"
+                                                    Binding="{Binding Id}"/>
+
+                                                    <DataGridTextColumn
+                                                    Width="100"
+                                                    Header="Όνομα"
+                                                    Binding="{Binding FirstName}"/>
+
+                                                    <DataGridTextColumn
+                                                    Width="100"
+                                                    Header="Επώνυμο"
+                                                    Binding="{Binding LastName}"/>
+
+                                                    <DataGridTextColumn
+                                                    Width="*"
+                                                    Header="Ιδιότητα"
+                                                    Binding="{Binding Specialty}"/>
+                                                </DataGrid.Columns>
+
+                                                <DataGrid.Resources>
+                                                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#5FFF"/>
+                                                    <Style TargetType="{x:Type ScrollBar}">
+                                                        <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+                                                        <Setter Property="Background" Value="Transparent"/>
+
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+
+                                                                <ControlTemplate TargetType="{x:Type ScrollBar}">
+                                                                    <Grid x:Name="GridRoot" Width="8" Background="{TemplateBinding Background}">
+
+                                                                        <Grid.RowDefinitions>
+                                                                            <RowDefinition Height="*" />
+                                                                        </Grid.RowDefinitions>
+
+                                                                        <Track
+                                                                        x:Name="PART_Track"
+                                                                        Grid.Row="0"
+                                                                        IsDirectionReversed="true"
+                                                                        Focusable="false">
+
+                                                                            <Track.Thumb>
+                                                                                <Thumb
+                                                                                x:Name="Thumb"
+                                                                                Background="#FFFF"
+                                                                                BorderThickness="0">
+
+                                                                                    <Thumb.Resources>
+                                                                                        <Style TargetType="{x:Type Border}">
+                                                                                            <Setter Property="CornerRadius" Value="5"/>
+                                                                                        </Style>
+                                                                                    </Thumb.Resources>
+
+                                                                                </Thumb>
+                                                                            </Track.Thumb>
+
+                                                                        </Track>
+                                                                    </Grid>
+
+                                                                    <ControlTemplate.Triggers>
+
+                                                                        <Trigger SourceName="Thumb" Property="IsMouseOver" Value="true">
+                                                                            <Setter
+                                                                            Value="{DynamicResource ButtonSelectBrush}"
+                                                                            TargetName="Thumb"
+                                                                            Property="Background"/>
+                                                                        </Trigger>
+
+                                                                        <Trigger SourceName="Thumb" Property="IsDragging" Value="true">
+                                                                            <Setter
+                                                                            Value="{DynamicResource DarkBrush}"
+                                                                            TargetName="Thumb"
+                                                                            Property="Background"/>
+                                                                        </Trigger>
+
+                                                                        <Trigger Property="IsEnabled" Value="false">
+                                                                            <Setter TargetName="Thumb" Property="Visibility" Value="Collapsed"/>
+                                                                        </Trigger>
+
+                                                                        <Trigger Property="Orientation" Value="Horizontal">
+                                                                            <Setter Property="Width" Value="Auto"/>
+                                                                            <Setter TargetName="Thumb" Property="Tag" Value="Horizontal"/>
+                                                                        </Trigger>
+
+                                                                    </ControlTemplate.Triggers>
+
+                                                                </ControlTemplate>
+
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                </DataGrid.Resources>
+
+                                            </DataGrid>
+
+                                            <Grid
+                                            Grid.Row="1"
+                                            Grid.Column="0">
+
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <ComboBox
+                                                Grid.Row="0"
+                                                Grid.Column="0"
+                                                Text="{Binding Path=InspectorsForAutopsyOptionsSelected.Text, Mode=TwoWay}"
+                                                ItemsSource="{Binding InspectorsForAutopsyOptions}"
+                                                SelectedItem="{Binding InspectorsForAutopsyOptionsSelected}">
+
+                                                    <ComboBox.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <VirtualizingStackPanel />
+                                                        </ItemsPanelTemplate>
+                                                    </ComboBox.ItemsPanel>
+
+                                                </ComboBox>
+
+                                                <Button
+                                                Grid.Row="0"
+                                                Grid.Column="1"
+                                                Command="{Binding Path=AddInspectorForAutopsyCommand}">
+
+                                                    <Image
+                                                    Width="20"
+                                                    Height="20"
+                                                    Source="../../Images/add.png"/>
+
+                                                </Button>
+
+                                            </Grid>
+
+                                        </Grid>
+
+                                    </ScrollViewer>
+
+                                </TabItem>
+
+                                <TabItem Header="Δικαστήρια">
+
+                                    <ScrollViewer VerticalScrollBarVisibility="Hidden">
+
+                                        <ScrollViewer.Resources>
+                                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#5FFF"/>
+                                            <Style TargetType="{x:Type ScrollBar}">
+                                                <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+                                                <Setter Property="Background" Value="Transparent"/>
+
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+
+                                                        <ControlTemplate TargetType="{x:Type ScrollBar}">
+                                                            <Grid x:Name="GridRoot" Width="8" Background="{TemplateBinding Background}">
+
+                                                                <Grid.RowDefinitions>
+                                                                    <RowDefinition Height="*" />
+                                                                </Grid.RowDefinitions>
+
+                                                                <Track
+                                                        x:Name="PART_Track"
+                                                        Grid.Row="0"
+                                                        IsDirectionReversed="true"
+                                                        Focusable="false">
+
+                                                                    <Track.Thumb>
+                                                                        <Thumb
+                                                                x:Name="Thumb"
+                                                                Background="#FFFF"
+                                                                BorderThickness="0">
+
+                                                                            <Thumb.Resources>
+                                                                                <Style TargetType="{x:Type Border}">
+                                                                                    <Setter Property="CornerRadius" Value="5"/>
+                                                                                </Style>
+                                                                            </Thumb.Resources>
+
+                                                                        </Thumb>
+                                                                    </Track.Thumb>
+
+                                                                </Track>
+                                                            </Grid>
+
+                                                            <ControlTemplate.Triggers>
+
+                                                                <Trigger SourceName="Thumb" Property="IsMouseOver" Value="true">
+                                                                    <Setter
+                                                            Value="{DynamicResource ButtonSelectBrush}"
+                                                            TargetName="Thumb"
+                                                            Property="Background"/>
+                                                                </Trigger>
+
+                                                                <Trigger SourceName="Thumb" Property="IsDragging" Value="true">
+                                                                    <Setter
+                                                            Value="{DynamicResource DarkBrush}"
+                                                            TargetName="Thumb"
+                                                            Property="Background"/>
+                                                                </Trigger>
+
+                                                                <Trigger Property="IsEnabled" Value="false">
+                                                                    <Setter TargetName="Thumb" Property="Visibility" Value="Collapsed"/>
+                                                                </Trigger>
+
+                                                                <Trigger Property="Orientation" Value="Horizontal">
+                                                                    <Setter Property="Width" Value="Auto"/>
+                                                                    <Setter TargetName="Thumb" Property="Tag" Value="Horizontal"/>
+                                                                </Trigger>
+
+                                                            </ControlTemplate.Triggers>
+
+                                                        </ControlTemplate>
+
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </ScrollViewer.Resources>
+
+                                        <Grid>
+
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <DataGrid
+                                            ItemsSource="{Binding TrialsForAutopsy}"
+                                            SelectedItem="{Binding SelectedTrialForAutopsy}"
+                                            Margin="5"
+                                            Grid.Row="0"
+                                            Grid.Column="0">
+
+                                                <DataGrid.InputBindings>
+                                                    <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding Path=TrialsForAutopsyDataGridRowDoubleClick}"/>
+                                                </DataGrid.InputBindings>
+
+                                                <DataGrid.Columns>
+                                                    <DataGridTemplateColumn Width="25">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate>
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <Button Command="{Binding DataContext.DeleteTrialForAutopsyCommand, ElementName=OrganizationsPresentation}">
+
+                                                                        <StackPanel>
+                                                                            <StackPanel.Background>
+                                                                                <RadialGradientBrush>
+                                                                                    <GradientStop Color="#FFFF" Offset="1"/>
+                                                                                    <GradientStop Color="#00F0" Offset="1"/>
+                                                                                </RadialGradientBrush>
+                                                                            </StackPanel.Background>
+                                                                            <Image
+                                                                            Width="15"
+                                                                            Height="15"
+                                                                            Margin="2"
+                                                                            Source="../../Images/close.png"/>
+                                                                        </StackPanel>
+
+                                                                    </Button>
+                                                                </StackPanel>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
+                                                    <DataGridTextColumn
+                                                    Width="40"
+                                                    Header="Id"
+                                                    Binding="{Binding Id}"/>
+
+                                                    <DataGridTextColumn
+                                                    Width="150"
+                                                    Header="Δραστηριότητα"
+                                                    Binding="{Binding ActivityName}"/>
+
+                                                    <DataGridTextColumn
+                                                    Width="100"
+                                                    Header="Έγγραφα"
+                                                    Binding="{Binding DocumentsCount}"/>
+
+                                                    <DataGridTextColumn
+                                                    Width="*"
+                                                    Header="Ημερομηνία"
+                                                    Binding="{Binding CaseProgress}"/>
+                                                </DataGrid.Columns>
+
+                                                <DataGrid.Resources>
+                                                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#5FFF"/>
+                                                    <Style TargetType="{x:Type ScrollBar}">
+                                                        <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+                                                        <Setter Property="Background" Value="Transparent"/>
+
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+
+                                                                <ControlTemplate TargetType="{x:Type ScrollBar}">
+                                                                    <Grid x:Name="GridRoot" Width="8" Background="{TemplateBinding Background}">
+
+                                                                        <Grid.RowDefinitions>
+                                                                            <RowDefinition Height="*" />
+                                                                        </Grid.RowDefinitions>
+
+                                                                        <Track
+                                                                        x:Name="PART_Track"
+                                                                        Grid.Row="0"
+                                                                        IsDirectionReversed="true"
+                                                                        Focusable="false">
+
+                                                                            <Track.Thumb>
+                                                                                <Thumb
+                                                                                x:Name="Thumb"
+                                                                                Background="#FFFF"
+                                                                                BorderThickness="0">
+
+                                                                                    <Thumb.Resources>
+                                                                                        <Style TargetType="{x:Type Border}">
+                                                                                            <Setter Property="CornerRadius" Value="5"/>
+                                                                                        </Style>
+                                                                                    </Thumb.Resources>
+
+                                                                                </Thumb>
+                                                                            </Track.Thumb>
+
+                                                                        </Track>
+                                                                    </Grid>
+
+                                                                    <ControlTemplate.Triggers>
+
+                                                                        <Trigger SourceName="Thumb" Property="IsMouseOver" Value="true">
+                                                                            <Setter
+                                                                            Value="{DynamicResource ButtonSelectBrush}"
+                                                                            TargetName="Thumb"
+                                                                            Property="Background"/>
+                                                                        </Trigger>
+
+                                                                        <Trigger SourceName="Thumb" Property="IsDragging" Value="true">
+                                                                            <Setter
+                                                                            Value="{DynamicResource DarkBrush}"
+                                                                            TargetName="Thumb"
+                                                                            Property="Background"/>
+                                                                        </Trigger>
+
+                                                                        <Trigger Property="IsEnabled" Value="false">
+                                                                            <Setter TargetName="Thumb" Property="Visibility" Value="Collapsed"/>
+                                                                        </Trigger>
+
+                                                                        <Trigger Property="Orientation" Value="Horizontal">
+                                                                            <Setter Property="Width" Value="Auto"/>
+                                                                            <Setter TargetName="Thumb" Property="Tag" Value="Horizontal"/>
+                                                                        </Trigger>
+
+                                                                    </ControlTemplate.Triggers>
+
+                                                                </ControlTemplate>
+
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                </DataGrid.Resources>
+
+                                            </DataGrid>
+
+                                            <Grid
+                                            Grid.Row="2"
+                                            Grid.Column="0"
+                                            HorizontalAlignment="Right">
+
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="*"/>
+                                                </Grid.RowDefinitions>
+
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <Button
+                                                Grid.Row="0"
+                                                Grid.Column="0"
+                                                Command="{Binding Path=AddTrialForAutopsyCommand}">
+
+                                                    <Image
+                                                    Width="20"
+                                                    Height="20"
+                                                    Source="../../Images/add.png"/>
+
+                                                </Button>
+
+                                                <Button
+                                                Grid.Row="0"
+                                                Grid.Column="1"
+                                                Command="{Binding Path=UpdateTrialForAutopsyCommand}">
+
+                                                    <Image
+                                                    Width="20"
+                                                    Height="20"
+                                                    Source="../../Images/save.png"/>
+
+                                                </Button>
+
+                                                <Button
+                                                Grid.Row="0"
+                                                Grid.Column="2"
+                                                Command="{Binding Path=ClearTrialForAutopsyInputsCommand}">
+
+                                                    <Image
+                                                    Width="20"
+                                                    Height="20"
+                                                    Source="../../Images/erase.png"/>
+
+                                                </Button>
+
+                                            </Grid>
+
+                                        </Grid>
+
+                                    </ScrollViewer>
+
+                                </TabItem>
+
+                                <TabItem Header="Αδειοδοτήσεις">
+
+                                    <ScrollViewer VerticalScrollBarVisibility="Hidden">
+
+                                        <ScrollViewer.Resources>
+                                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#5FFF"/>
+                                            <Style TargetType="{x:Type ScrollBar}">
+                                                <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+                                                <Setter Property="Background" Value="Transparent"/>
+
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+
+                                                        <ControlTemplate TargetType="{x:Type ScrollBar}">
+                                                            <Grid x:Name="GridRoot" Width="8" Background="{TemplateBinding Background}">
+
+                                                                <Grid.RowDefinitions>
+                                                                    <RowDefinition Height="*" />
+                                                                </Grid.RowDefinitions>
+
+                                                                <Track
+                                                        x:Name="PART_Track"
+                                                        Grid.Row="0"
+                                                        IsDirectionReversed="true"
+                                                        Focusable="false">
+
+                                                                    <Track.Thumb>
+                                                                        <Thumb
+                                                                x:Name="Thumb"
+                                                                Background="#FFFF"
+                                                                BorderThickness="0">
+
+                                                                            <Thumb.Resources>
+                                                                                <Style TargetType="{x:Type Border}">
+                                                                                    <Setter Property="CornerRadius" Value="5"/>
+                                                                                </Style>
+                                                                            </Thumb.Resources>
+
+                                                                        </Thumb>
+                                                                    </Track.Thumb>
+
+                                                                </Track>
+                                                            </Grid>
+
+                                                            <ControlTemplate.Triggers>
+
+                                                                <Trigger SourceName="Thumb" Property="IsMouseOver" Value="true">
+                                                                    <Setter
+                                                            Value="{DynamicResource ButtonSelectBrush}"
+                                                            TargetName="Thumb"
+                                                            Property="Background"/>
+                                                                </Trigger>
+
+                                                                <Trigger SourceName="Thumb" Property="IsDragging" Value="true">
+                                                                    <Setter
+                                                            Value="{DynamicResource DarkBrush}"
+                                                            TargetName="Thumb"
+                                                            Property="Background"/>
+                                                                </Trigger>
+
+                                                                <Trigger Property="IsEnabled" Value="false">
+                                                                    <Setter TargetName="Thumb" Property="Visibility" Value="Collapsed"/>
+                                                                </Trigger>
+
+                                                                <Trigger Property="Orientation" Value="Horizontal">
+                                                                    <Setter Property="Width" Value="Auto"/>
+                                                                    <Setter TargetName="Thumb" Property="Tag" Value="Horizontal"/>
+                                                                </Trigger>
+
+                                                            </ControlTemplate.Triggers>
+
+                                                        </ControlTemplate>
+
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </ScrollViewer.Resources>
+
+                                        <Grid>
+
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <DataGrid
+                                            ItemsSource="{Binding LicensesForAutopsy}"
+                                            SelectedItem="{Binding SelectedLicenseForAutopsy}"
+                                            Margin="5"
+                                            Grid.Row="0"
+                                            Grid.Column="0">
+
+                                                <DataGrid.InputBindings>
+                                                    <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding Path=LicensesForAutopsyDataGridRowDoubleClick}"/>
+                                                </DataGrid.InputBindings>
+
+                                                <DataGrid.Columns>
+                                                    <DataGridTemplateColumn Width="25">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate>
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <Button Command="{Binding DataContext.DeleteLicenseForAutopsyCommand, ElementName=OrganizationsPresentation}">
+
+                                                                        <StackPanel>
+                                                                            <StackPanel.Background>
+                                                                                <RadialGradientBrush>
+                                                                                    <GradientStop Color="#FFFF" Offset="1"/>
+                                                                                    <GradientStop Color="#00F0" Offset="1"/>
+                                                                                </RadialGradientBrush>
+                                                                            </StackPanel.Background>
+                                                                            <Image
+                                                                            Width="15"
+                                                                            Height="15"
+                                                                            Margin="2"
+                                                                            Source="../../Images/close.png"/>
+                                                                        </StackPanel>
+
+                                                                    </Button>
+                                                                </StackPanel>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
+                                                    <DataGridTextColumn
+                                                    Width="40"
+                                                    Header="Id"
+                                                    Binding="{Binding Id}"/>
+
+                                                    <DataGridTextColumn
+                                                    Width="100"
+                                                    Header="Αρ. Άδειας"
+                                                    Binding="{Binding LicenseNo}"/>
+
+                                                    <DataGridTextColumn
+                                                    Width="100"
+                                                    Header="Από"
+                                                    Binding="{Binding LicensedBy}"/>
+
+                                                    <DataGridTextColumn
+                                                    Width="140"
+                                                    Header="Ημ/νία Αδειοδότησης"
+                                                    Binding="{Binding DateLicensed}"/>
+
+                                                    <DataGridTextColumn
+                                                    Width="*"
+                                                    Header="Ημ/νία Λήξης"
+                                                    Binding="{Binding DateExpiring}"/>
+                                                </DataGrid.Columns>
+
+                                                <DataGrid.Resources>
+                                                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#5FFF"/>
+                                                    <Style TargetType="{x:Type ScrollBar}">
+                                                        <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+                                                        <Setter Property="Background" Value="Transparent"/>
+
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+
+                                                                <ControlTemplate TargetType="{x:Type ScrollBar}">
+                                                                    <Grid x:Name="GridRoot" Width="8" Background="{TemplateBinding Background}">
+
+                                                                        <Grid.RowDefinitions>
+                                                                            <RowDefinition Height="*" />
+                                                                        </Grid.RowDefinitions>
+
+                                                                        <Track
+                                                                        x:Name="PART_Track"
+                                                                        Grid.Row="0"
+                                                                        IsDirectionReversed="true"
+                                                                        Focusable="false">
+
+                                                                            <Track.Thumb>
+                                                                                <Thumb
+                                                                                x:Name="Thumb"
+                                                                                Background="#FFFF"
+                                                                                BorderThickness="0">
+
+                                                                                    <Thumb.Resources>
+                                                                                        <Style TargetType="{x:Type Border}">
+                                                                                            <Setter Property="CornerRadius" Value="5"/>
+                                                                                        </Style>
+                                                                                    </Thumb.Resources>
+
+                                                                                </Thumb>
+                                                                            </Track.Thumb>
+
+                                                                        </Track>
+                                                                    </Grid>
+
+                                                                    <ControlTemplate.Triggers>
+
+                                                                        <Trigger SourceName="Thumb" Property="IsMouseOver" Value="true">
+                                                                            <Setter
+                                                                            Value="{DynamicResource ButtonSelectBrush}"
+                                                                            TargetName="Thumb"
+                                                                            Property="Background"/>
+                                                                        </Trigger>
+
+                                                                        <Trigger SourceName="Thumb" Property="IsDragging" Value="true">
+                                                                            <Setter
+                                                                            Value="{DynamicResource DarkBrush}"
+                                                                            TargetName="Thumb"
+                                                                            Property="Background"/>
+                                                                        </Trigger>
+
+                                                                        <Trigger Property="IsEnabled" Value="false">
+                                                                            <Setter TargetName="Thumb" Property="Visibility" Value="Collapsed"/>
+                                                                        </Trigger>
+
+                                                                        <Trigger Property="Orientation" Value="Horizontal">
+                                                                            <Setter Property="Width" Value="Auto"/>
+                                                                            <Setter TargetName="Thumb" Property="Tag" Value="Horizontal"/>
+                                                                        </Trigger>
+
+                                                                    </ControlTemplate.Triggers>
+
+                                                                </ControlTemplate>
+
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                </DataGrid.Resources>
+
+                                            </DataGrid>
+
+                                            <Grid
+                                            Grid.Row="1"
+                                            Grid.Column="0">
+
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <DockPanel
+                                                Grid.Row="0"
+                                                Grid.Column="0"
+                                                Margin="5">
+
+                                                    <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    Text="Αρ.Άδειας"/>
+
+                                                    <TextBox Text="{Binding Path=LicenseForAutopsyLicenseNo, Mode=TwoWay}"/>
+
+                                                </DockPanel>
+
+                                                <DockPanel
+                                                Grid.Row="0"
+                                                Grid.Column="1"
+                                                Margin="5">
+
+                                                    <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    Text="Αδειοδοτήθηκε Από"/>
+
+                                                    <TextBox Text="{Binding Path=LicenseForAutopsyLicensedBy, Mode=TwoWay}"/>
+
+                                                </DockPanel>
+
+                                                <DockPanel
+                                                Grid.Row="1"
+                                                Grid.Column="0"
+                                                Grid.ColumnSpan="2"
+                                                Margin="5">
+
+                                                    <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    Text="Σημειώσεις"/>
+
+                                                    <TextBox Text="{Binding Path=LicenseForAutopsyNotes, Mode=TwoWay}"/>
+
+                                                </DockPanel>
+
+                                                <DockPanel
+                                                Grid.Row="2"
+                                                Grid.Column="0"
+                                                Margin="5">
+
+                                                    <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    Text="Ημ/νία άδειας"/>
+
+                                                    <DatePicker SelectedDate="{Binding Path=LicenseForAutopsyDateLicensed}">
+                                                        <DatePicker.Resources>
+                                                            <Style TargetType="{x:Type DatePicker}">
+                                                                <Setter Property="Foreground" Value="White"/>
+                                                                <Setter Property="BorderThickness" Value="0"/>
+                                                                <Setter Property="Padding" Value="0"/>
+                                                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                                            </Style>
+                                                            <Style TargetType="{x:Type DatePickerTextBox}">
+                                                                <Setter Property="Template">
+                                                                    <Setter.Value>
+                                                                        <ControlTemplate>
+                                                                            <TextBox x:Name="PART_TextBox" Text="{Binding Path=SelectedDate, StringFormat='dd/MM/yyyy', RelativeSource={RelativeSource AncestorType={x:Type DatePicker}}}" />
+                                                                        </ControlTemplate>
+                                                                    </Setter.Value>
+                                                                </Setter>
+                                                                <Setter Property="BorderThickness" Value="0"/>
+                                                                <Setter Property="Background" Value="Transparent"/>
+                                                                <Setter Property="Foreground" Value="White"/>
+                                                                <Setter Property="TextAlignment" Value="Center"/>
+                                                                <Setter Property="Margin" Value="10, 0, 10, 0"/>
+                                                            </Style>
+                                                        </DatePicker.Resources>
+                                                    </DatePicker>
+
+                                                </DockPanel>
+
+                                                <DockPanel
+                                                Grid.Row="2"
+                                                Grid.Column="1"
+                                                Margin="5">
+
+                                                    <TextBlock
+                                                    VerticalAlignment="Center"
+                                                    Text="Ημ/νία λήξης"/>
+
+                                                    <DatePicker SelectedDate="{Binding Path=LicenseForAutopsyDateExpiring}">
+                                                        <DatePicker.Resources>
+                                                            <Style TargetType="{x:Type DatePicker}">
+                                                                <Setter Property="Foreground" Value="White"/>
+                                                                <Setter Property="BorderThickness" Value="0"/>
+                                                                <Setter Property="Padding" Value="0"/>
+                                                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                                            </Style>
+                                                            <Style TargetType="{x:Type DatePickerTextBox}">
+                                                                <Setter Property="Template">
+                                                                    <Setter.Value>
+                                                                        <ControlTemplate>
+                                                                            <TextBox x:Name="PART_TextBox" Text="{Binding Path=SelectedDate, StringFormat='dd/MM/yyyy', RelativeSource={RelativeSource AncestorType={x:Type DatePicker}}}" />
+                                                                        </ControlTemplate>
+                                                                    </Setter.Value>
+                                                                </Setter>
+                                                                <Setter Property="BorderThickness" Value="0"/>
+                                                                <Setter Property="Background" Value="Transparent"/>
+                                                                <Setter Property="Foreground" Value="White"/>
+                                                                <Setter Property="TextAlignment" Value="Center"/>
+                                                                <Setter Property="Margin" Value="10, 0, 10, 0"/>
+                                                            </Style>
+                                                        </DatePicker.Resources>
+                                                    </DatePicker>
+
+                                                </DockPanel>
+
+                                            </Grid>
+
+                                            <Grid
+                                            Grid.Row="2"
+                                            Grid.Column="0"
+                                            HorizontalAlignment="Right">
+
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="*"/>
+                                                </Grid.RowDefinitions>
+
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <Button
+                                                Grid.Row="0"
+                                                Grid.Column="0"
+                                                Command="{Binding Path=AddLicenseForAutopsyCommand}">
+
+                                                    <Image
+                                                    Width="20"
+                                                    Height="20"
+                                                    Source="../../Images/add.png"/>
+
+                                                </Button>
+
+                                                <Button
+                                                Grid.Row="0"
+                                                Grid.Column="1"
+                                                Command="{Binding Path=UpdateLicenseForAutopsyCommand}">
+
+                                                    <Image
+                                                    Width="20"
+                                                    Height="20"
+                                                    Source="../../Images/save.png"/>
+
+                                                </Button>
+
+                                                <Button
+                                                Grid.Row="0"
+                                                Grid.Column="2"
+                                                Command="{Binding Path=ClearLicenseForAutopsyInputsCommand}">
+
+                                                    <Image
+                                                    Width="20"
+                                                    Height="20"
+                                                    Source="../../Images/erase.png"/>
+
+                                                </Button>
+
+                                            </Grid>
+
+                                        </Grid>
+
+                                    </ScrollViewer>
+
+                                </TabItem>
+
+                            </TabControl>
+
+                            <Grid
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                HorizontalAlignment="Right">
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Button
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Command="{Binding Path=AddAutopsyCommand}">
+
+                                    <DockPanel>
+
+                                        <Image
+                                            Width="20"
+                                            Height="20"
+                                            Source="../../Images/add.png"/>
+
+                                        <TextBlock Text="Προσθήκη Νέας"/>
+
+                                    </DockPanel>
+
+                                </Button>
+
+                                <Button
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Command="{Binding Path=UpdateAutopsyCommand}">
+
+                                    <DockPanel>
+
+                                        <Image
+                                            Width="20"
+                                            Height="20"
+                                            Source="../../Images/save.png"/>
+
+                                        <TextBlock Text="Αποθήκευση Αλλαγών"/>
+
+                                    </DockPanel>
+
+                                </Button>
+
+                                <Button
+                                    Grid.Row="0"
+                                    Grid.Column="2"
+                                    Command="{Binding Path=ClearAutopsyInputsCommand}">
+
+                                    <DockPanel>
+
+                                        <Image
+                                            Width="20"
+                                            Height="20"
+                                            Source="../../Images/erase.png"/>
+
+                                        <TextBlock Text="Καθαρισμός"/>
+
+                                    </DockPanel>
+
+                                </Button>
+
+                            </Grid>
+
+                        </Grid>
+
+                    </TabItem>
+
+                </TabControl>
+
+            </Grid>
+
+        </Border>
+
+    </Grid>
+
+</UserControl>
